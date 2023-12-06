@@ -1,0 +1,115 @@
+#include <iostream>
+#include <vector>
+#include <ctime>
+
+using namespace std;
+
+// 定义报警信息结构体
+struct Alarm {
+    string content; // 报警内容
+    time_t time; // 报警时间
+};
+
+// 定义出警信息结构体
+struct Dispatch {
+    string content; // 出警内容
+    time_t time; // 出警时间
+};
+
+// 定义报警和出警管理系统类
+class AlarmDispatchSystem {
+private:
+    vector<Alarm> alarms; // 存储报警信息的向量
+    vector<Dispatch> dispatches; // 存储出警信息的向量
+    int maxAlarmNum; // 最大报警信息数量
+public:
+    AlarmDispatchSystem(int maxNum) {
+        maxAlarmNum = maxNum;
+    }
+
+    // 添加报警信息
+    void addAlarm(string content) {
+        if (alarms.size() >= maxAlarmNum) {
+            cout << "待处理信息过多，发出警告！" << endl;
+        }
+        Alarm alarm;
+        alarm.content = content;
+        alarm.time = time(NULL);
+        alarms.push_back(alarm);
+    }
+
+    // 删除报警信息
+    void deleteAlarm(int index) {
+        alarms.erase(alarms.begin() + index);
+    }
+
+    // 记录出警信息
+    void addDispatch(string content) {
+        Dispatch dispatch;
+        dispatch.content = content;
+        dispatch.time = time(NULL);
+        dispatches.push_back(dispatch);
+    }
+
+    // 显示所有报警信息
+    void showAlarms() {
+        for (int i = 0; i < alarms.size(); i++) {
+            cout << "报警内容：" << alarms[i].content << "，报警时间：" << ctime(&alarms[i].time);
+        }
+    }
+
+    // 显示所有出警信息
+    void showDispatches() {
+        for (int i = 0; i < dispatches.size(); i++) {
+            cout << "出警内容：" << dispatches[i].content << "，出警时间：" << ctime(&dispatches[i].time);
+        }
+    }
+};
+
+int main() {
+    AlarmDispatchSystem system(10); // 最大报警信息数量为10
+    string alarmContent, dispatchContent;
+    int choice, index;
+
+    while (true) {
+        cout << "请选择操作：" << endl;
+        cout << "1. 添加报警信息" << endl;
+        cout << "2. 删除报警信息" << endl;
+        cout << "3. 记录出警信息" << endl;
+        cout << "4. 显示所有报警信息" << endl;
+        cout << "5. 显示所有出警信息" << endl;
+        cout << "6. 退出" << endl;
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "请输入报警内容：" << endl;
+            cin >> alarmContent;
+            system.addAlarm(alarmContent);
+            break;
+        case 2:
+            cout << "请输入要删除的报警信息的序号：" << endl;
+            cin >> index;
+            system.deleteAlarm(index);
+            break;
+        case 3:
+            cout << "请输入出警内容：" << endl;
+            cin >> dispatchContent;
+            system.addDispatch(dispatchContent);
+            break;
+        case 4:
+            system.showAlarms();
+            break;
+        case 5:
+            system.showDispatches();
+            break;
+        case 6:
+            return 0;
+        default:
+            cout << "输入错误，请重新输入！" << endl;
+            break;
+        }
+    }
+
+    return 0;
+}
