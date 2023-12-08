@@ -1,0 +1,133 @@
+#include <iostream>
+#include <vector>
+#include <ctime>
+#include <algorithm>
+
+using namespace std;
+
+
+// 定义报警信息结构体
+struct Alarm {
+    string content; // 报警内容
+    time_t time; // 报警时间
+    int level; // 报警级别
+};
+
+// 定义出警信息结构体
+struct Dispatch {
+    string content; // 出警内容
+    time_t time; // 出警时间
+    string personnel; // 出警人员
+    string vehicle; // 出警车辆
+};
+
+// 定义报警和出警管理系统类
+class AlarmDispatchSystem {
+private:
+    vector<Alarm> alarms; // 存储报警信息的向量
+    vector<Dispatch> dispatches; // 存储出警信息的向量
+    int maxAlarmNum; // 最大报警信息数量
+public:
+    AlarmDispatchSystem(int maxNum) {
+        maxAlarmNum = maxNum;
+    }
+
+    // 添加报警信息
+    void addAlarm(string content, int level) {
+        if (alarms.size() >= maxAlarmNum) {
+            cout << "待处理信息过多，发出警告！" << endl;
+        }
+        Alarm alarm;
+        alarm.content = content;
+        alarm.time = time(NULL);
+        alarm.level = level;
+        alarms.push_back(alarm);
+    }
+
+    // 删除报警信息
+    void deleteAlarm(int index) {
+        alarms.erase(alarms.begin() + index);
+    }
+
+    // 记录出警信息
+    void addDispatch(string content, string personnel, string vehicle) {
+        Dispatch dispatch;
+        dispatch.content = content;
+        dispatch.time = time(NULL);
+        dispatch.personnel = personnel;
+        dispatch.vehicle = vehicle;
+        dispatches.push_back(dispatch);
+    }
+
+    // 显示所有报警信息
+    void showAlarms() {
+        sort(alarms.begin(), alarms.end(), [](Alarm a, Alarm b) { return a.time > b.time; }); // 按时间排序
+        for (int i = 0; i < alarms.size(); i++) {
+            cout << "报警内容：" << alarms[i].content << "，报警时间：" << ctime(&alarms[i].time) << "，报警级别：" << alarms[i].level << endl;
+        }
+    }
+
+    // 显示所有出警信息
+    void showDispatches() {
+        sort(dispatches.begin(), dispatches.end(), [](Dispatch a, Dispatch b) { return a.time > b.time; }); // 按时间排序
+        for (int i = 0; i < dispatches.size(); i++) {
+            cout << "出警内容：" << dispatches[i].content << "，出警时间：" << ctime(&dispatches[i].time) << "，出警人员：" << dispatches[i].personnel << "，出警车辆：" << dispatches[i].vehicle << endl;
+        }
+    }
+};
+
+int main() {
+    AlarmDispatchSystem system(10); // 最大报警信息数量为10
+    string alarmContent, dispatchContent, personnel, vehicle;
+    int choice, index, level;
+
+
+    while (true) {
+        cout << "\n=====报警信息系统菜单=====\n" << endl;
+        cout << "1. 添加报警信息" << endl;
+        cout << "2. 删除报警信息" << endl;
+        cout << "3. 记录出警信息" << endl;
+        cout << "4. 显示所有报警信息" << endl;
+        cout << "5. 显示所有出警信息" << endl;
+        cout << "6. 退出\n" << endl;
+        cout << "============================" << endl;
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "请输入报警内容：" << endl;
+            cin >> alarmContent;
+            cout << "请输入报警级别：" << endl;
+            cin >> level;
+            system.addAlarm(alarmContent, level);
+            break;
+        case 2:
+            cout << "请输入要删除的报警信息的序号：" << endl;
+            cin >> index;
+            system.deleteAlarm(index);
+            break;
+        case 3:
+            cout << "请输入出警内容：" << endl;
+            cin >> dispatchContent;
+            cout << "请输入出警人员：" << endl;
+            cin >> personnel;
+            cout << "请输入出警车辆：" << endl;
+            cin >> vehicle;
+            system.addDispatch(dispatchContent, personnel, vehicle);
+            break;
+        case 4:
+            system.showAlarms();
+            break;
+        case 5:
+            system.showDispatches();
+            break;
+        case 6:
+            return 0;
+        default:
+            cout << "输入错误，请重新输入！" << endl;
+            break;
+        }
+    }
+
+    return 0;
+}
